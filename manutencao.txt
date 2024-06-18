@@ -1,7 +1,0 @@
-Tipo: Smartphone
-ID: 1
-Nome: ricardao
-Telefone: 123420
-Modelo Smartphone: iphone 57
-Descricao do Problema: não lançou ainda
-
