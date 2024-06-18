@@ -65,7 +65,7 @@ def handle_client(conn, addr):
                     arquivo.write(f"Descricao do Problema: {problem}\n")
                     arquivo.write("\n")
 
-                conn.sendall("Entraremos em contato em instantes!\nVolte sempre!\n Pressione Enter para inserir novo orçamento ou digite 'exit'para sair\n".encode())
+                conn.sendall("Entraremos em contato em instantes!\nVolte sempre!\n Pressione Enter para inserir novo orçamento ou digite 'exit' para sair\n".encode())
 
             elif get_manutencao == '2':
                 conn.sendall("1 - Computador de mesa/ Desktop\n2 - Computador portátil/ Notebook\n".encode())
@@ -91,24 +91,35 @@ def handle_client(conn, addr):
                     arquivo.write(f"Descricao do Problema: {problem}\n")
                     arquivo.write("\n")
 
-                conn.sendall("Entraremos em contato em instantes!\nVolte sempre!\n Pressione Enter para inserir novo orçamento ou digite 'exit'para sair\n".encode())
+                conn.sendall("Entraremos em contato em instantes!\nVolte sempre!\n Pressione Enter para inserir novo orçamento ou digite 'exit' para sair\n".encode())
 
         elif option_user == '2' or option_user.lower() == 'exit':
             conn.sendall("Obrigado!\n".encode())
+            conn.close()
+            abrir_arquivo_apos_termino()
             break
-
         else:
             conn.sendall("Opção não encontrada\n".encode())
+
+        # Após o orçamento, verificar se o usuário deseja continuar ou sair
+        post_process(conn)
 
     conn.close()
     print(f"Conexão fechada por {addr}")
 
+def post_process(conn):
+    additional_input = conn.recv(1024).decode().strip()
+    if additional_input.lower() == 'exit':
+        conn.sendall("Obrigado!\n".encode())
+        conn.close()
+        abrir_arquivo_apos_termino()
+    else:
+        conn.sendall("Continuando...\n".encode())
+
 def abrir_arquivo_apos_termino():
     if os.path.exists('manutencao.txt') and os.stat('manutencao.txt').st_size == 0:
-        # Se estiver vazio, abrir o arquivo de backup
         subprocess.run(['notepad', 'manutencao_backup.txt'])
     else:
-        # Caso contrário, abrir o arquivo de manutenção
         subprocess.run(['notepad', 'manutencao.txt'])
 
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
